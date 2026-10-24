@@ -1,0 +1,24 @@
+<server description="CafefeApi">
+
+    <include location="configDropins/overrides/postgres-driver.xml"/>
+
+    <featureManager>
+        <feature>jakartaee-11.0</feature>
+    </featureManager>
+
+    <httpEndpoint id="defaultHttpEndpoint" httpPort="9080" httpsPort="9443"/>
+    <webApplication location="CafefeApi-1.0-SNAPSHOT.war" contextRoot="/"/>
+
+    <dataSource id="postgresdatasource"
+                jndiName="jdbc/pgdb"
+                jdbcDriverRef="postgresDriver"
+                type="javax.sql.ConnectionPoolDataSource"
+                transactional="true">
+        <properties.postgresql serverName="localhost"
+                               portNumber="5433"
+                               databaseName="cafeteria"
+                               user="postgres"
+                               password="12345"/>
+    </dataSource>
+
+</server>
