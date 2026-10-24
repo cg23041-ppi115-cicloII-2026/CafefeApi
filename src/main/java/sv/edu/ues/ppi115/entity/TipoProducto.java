@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -87,7 +88,7 @@ public class TipoProducto implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+    @JsonbTransient
     public List<ProductoTipoProducto> getProductoTipoProductoList() {
         return productoTipoProductoList;
     }

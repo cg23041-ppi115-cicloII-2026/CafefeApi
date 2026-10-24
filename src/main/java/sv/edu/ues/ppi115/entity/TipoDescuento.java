@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.json.bind.annotation.JsonbTransient;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -98,7 +99,7 @@ public class TipoDescuento implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+    @JsonbTransient
     public List<Descuento> getDescuentoList() {
         return descuentoList;
     }

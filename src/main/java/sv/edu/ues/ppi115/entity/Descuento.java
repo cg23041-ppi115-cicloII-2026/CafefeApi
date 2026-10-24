@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -116,7 +117,7 @@ public class Descuento implements Serializable {
     public void setIdTipoDescuento(TipoDescuento idTipoDescuento) {
         this.idTipoDescuento = idTipoDescuento;
     }
-
+  @JsonbTransient
     public List<DescuentoProducto> getDescuentoProductoList() {
         return descuentoProductoList;
     }
