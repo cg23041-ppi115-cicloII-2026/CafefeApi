@@ -1,7 +1,6 @@
 package sv.edu.ues.ppi115.cafefeapi.boundary.rest;
 
 import jakarta.inject.Inject;
-import jakarta.validation.constraints.Max;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
@@ -36,7 +35,7 @@ public class TipoDescuentoResource implements Serializable {
     @Produces({MediaType.APPLICATION_JSON})
     public Response findRange(
             @QueryParam("first") @DefaultValue("0") int first,
-            @QueryParam("max") @DefaultValue("50") @Max(50) int max) {
+            @QueryParam("max") @DefaultValue("50") int max) {
         if (first >= 0 && max > 0 && max <= 50) {
             try {
                 return Response.ok(tdService.findRange(first, max))
