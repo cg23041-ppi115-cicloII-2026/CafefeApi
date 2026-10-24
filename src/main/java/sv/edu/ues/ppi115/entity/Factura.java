@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
@@ -113,7 +114,7 @@ public class Factura implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+     @JsonbTransient
     public List<Pago> getPagoList() {
         return pagoList;
     }
@@ -121,7 +122,7 @@ public class Factura implements Serializable {
     public void setPagoList(List<Pago> pagoList) {
         this.pagoList = pagoList;
     }
-
+    @JsonbTransient
     public List<FacturaOrdenProducto> getFacturaOrdenProductoList() {
         return facturaOrdenProductoList;
     }

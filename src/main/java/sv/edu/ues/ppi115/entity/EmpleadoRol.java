@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -101,7 +102,7 @@ public class EmpleadoRol implements Serializable {
     public void setIdRol(Rol idRol) {
         this.idRol = idRol;
     }
-
+     @JsonbTransient
     public List<Factura> getFacturaList() {
         return facturaList;
     }
@@ -109,7 +110,7 @@ public class EmpleadoRol implements Serializable {
     public void setFacturaList(List<Factura> facturaList) {
         this.facturaList = facturaList;
     }
-
+    @JsonbTransient
     public List<Orden> getOrdenList() {
         return ordenList;
     }

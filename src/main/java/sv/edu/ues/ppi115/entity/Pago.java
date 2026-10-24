@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -89,7 +90,7 @@ public class Pago implements Serializable {
     public void setIdFactura(Factura idFactura) {
         this.idFactura = idFactura;
     }
-
+    @JsonbTransient
     public List<PagoDetalle> getPagoDetalleList() {
         return pagoDetalleList;
     }
