@@ -1,73 +1,121 @@
 package sv.edu.ues.ppi115.control;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * Clase base para el acceso a datos de cualquier entidad.
- * Cada service concreto solo indica su EntityManager y su clase de entidad.
+ * Clase base para el acceso a datos de cualquier entidad. Cada service concreto
+ * solo indica su EntityManager y su clase de entidad.
  *
  * @param <T> tipo de la entidad
  */
-public abstract class AbstractDataAccess<T> implements Serializable {
+public abstract class AbstractDataAccess<T> implements ServiceInterface<T> {
+
+    final Class<T> entityClass;
+
+    public AbstractDataAccess(Class<T> entityClass) {
+        this.entityClass = entityClass;
+    }
 
     protected abstract EntityManager getEntityManager();
 
-    protected abstract Class<T> getEntityClass();
-
+    /**
+     * Almacena registros en el repositorio, el objeto a almacenar no puede ser
+     * nulo, de lo contrario se lanzará una IllegalArgumentException. Si el
+     * repositorio es nulo se lanzará una NullPointerException. Cualquier otra
+     * excepción se encapsulará en una IllegalStateException.
+     *
+     * @param entity el objeto a almacenar
+     * @throws IllegalArgumentException si el objeto a almacenar es nulo
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
     public void create(T entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("La entidad no puede ser nula");
+        if (entity != null) {
+            try {
+                EntityManager em = this.getEntityManager();
+                if (em != null) {
+                    em.persist(entity);
+                    return;
+                }
+                throw new NullPointerException("El repositorio es nulo");
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        } else {
+            throw new IllegalArgumentException("entity no puede ser nulo");
         }
-        getEntityManager().persist(entity);
     }
 
-    public T findById(Object id) {
-        if (id == null) {
-            throw new IllegalArgumentException("El id no puede ser nulo");
-        }
-        return getEntityManager().find(getEntityClass(), id);
-    }
-
-    public List<T> findRange(int first, int max) {
-        if (first < 0 || max <= 0) {
-            throw new IllegalArgumentException("Parametros de rango invalidos");
-        }
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(getEntityClass());
-        Root<T> root = cq.from(getEntityClass());
-        cq.select(root);
-        TypedQuery<T> query = getEntityManager().createQuery(cq);
-        query.setFirstResult(first);
-        query.setMaxResults(max);
-        return query.getResultList();
-    }
-
-    public T update(T entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("La entidad no puede ser nula");
-        }
-        return getEntityManager().merge(entity);
-    }
-
+    /**
+     * Elimina un registro del repositorio, el objeto a eliminar no puede ser
+     * nulo, de lo contrario se lanzará una IllegalArgumentException. Si el
+     * repositorio es nulo se lanzará una NullPointerException. Cualquier otra
+     * excepción se encapsulará en una IllegalStateException.
+     *
+     * @param entity el objeto a eliminar
+     * @throws IllegalArgumentException si el objeto a eliminar es nulo
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
     public void delete(T entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("La entidad no puede ser nula");
+        if (entity != null) {
+            try {
+                EntityManager em = this.getEntityManager();
+                if (em == null) {
+                    throw new NullPointerException("El repositorio es nulo");
+                }
+                if (em.contains(entity)) {
+                    em.remove(entity);
+                } else {
+                    em.remove(em.merge(entity));
+                }
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        } else {
+            throw new IllegalArgumentException("entity no puede ser nulo");
         }
-        getEntityManager().remove(getEntityManager().contains(entity)
-                ? entity : getEntityManager().merge(entity));
+    }
+    /**
+     * Busca registros en el repositorio, los parámetros first y max no pueden
+     * ser negativos, de lo contrario se lanzará una IllegalArgumentException.
+     * Si el repositorio es nulo se lanzará una NullPointerException. Cualquier
+     * otra excepción se encapsulará en una IllegalStateException.
+     *
+     * @param first el índice del primer registro a buscar
+     * @param max el número máximo de registros a buscar
+     * @return una lista de registros encontrados
+     * @throws IllegalArgumentException si los parámetros first o max son
+     * negativos
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
+     public List<T> findRange(int first, int max){
+        if (first < 0 || max < 0){
+            throw new IllegalArgumentException("Parametro no válido: first o max");
+        }
+        try {
+            EntityManager em = this.getEntityManager();
+            if (em != null){
+                return em.createNamedQuery(entityClass.getSimpleName() + ".findAll", entityClass)
+                        .setFirstResult(first)
+                        .setMaxResults(max)
+                        .getResultList();
+            }
+            throw new NullPointerException("El repositorio es nulo");
+        }catch (Exception ex){
+            throw new IllegalStateException(ex);
+        }
+    }
+     public Long contar() throws IllegalStateException {
+     throw new UnsupportedOperationException("Pendiente de implementar");
+    }
+     public T update(T entity) throws IllegalStateException, IllegalArgumentException {
+     throw new UnsupportedOperationException("Pendiente de implementar");
+    }
+       public T findById(Object id){
+        throw new UnsupportedOperationException("Pendiente de implementar");
     }
 
-    public long contar() {
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<T> root = cq.from(getEntityClass());
-        cq.select(cb.count(root));
-        return getEntityManager().createQuery(cq).getSingleResult();
-    }
 }
