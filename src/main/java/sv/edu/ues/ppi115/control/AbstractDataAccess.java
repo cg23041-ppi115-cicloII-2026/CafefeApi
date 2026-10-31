@@ -1,6 +1,7 @@
 package sv.edu.ues.ppi115.control;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**
@@ -108,14 +109,71 @@ public abstract class AbstractDataAccess<T> implements ServiceInterface<T> {
             throw new IllegalStateException(ex);
         }
     }
+     /**
+     * Cuenta el número total de registros en el repositorio. Si el repositorio es nulo se lanzará una NullPointerException. Cualquier otra excepción se encapsulará en una IllegalStateException.
+     * @return el número total de registros en el repositorio
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
      public Long contar() throws IllegalStateException {
-     throw new UnsupportedOperationException("Pendiente de implementar");
+         try{
+             EntityManager em = getEntityManager();
+             if (em ==null){
+                 throw new IllegalStateException("Error al acceder al repositorio");
+             }
+             TypedQuery<Long> query = em.createNamedQuery(
+                     entityClass.getSimpleName()+ ".countAll", Long.class);
+             return query.getSingleResult();
+         }catch (Exception e){
+             throw new IllegalStateException("Error al acceder al repositorio", e);
+        }
+     
     }
+     
+    /**
+     * Actualiza un registro en el repositorio, el objeto a actualizar no puede ser nulo, de lo contrario se lanzará una IllegalArgumentException. Si el repositorio es nulo se lanzará una NullPointerException. Cualquier otra excepción se encapsulará en una IllegalStateException.
+     * @param entity el objeto a actualizar
+     * @return el objeto actualizado
+     * @throws IllegalArgumentException si el objeto a actualizar es nulo
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
      public T update(T entity) throws IllegalStateException, IllegalArgumentException {
-     throw new UnsupportedOperationException("Pendiente de implementar");
-    }
+         if (entity == null){
+             try{
+                 EntityManager em = this.getEntityManager();
+                 if(em != null){
+                     return em.merge(entity);
+                 }
+                 throw new NullPointerException("El repositorio es nulo");
+             }  catch (Exception ex) {
+                 throw new IllegalStateException(ex);
+             }
+         }else{
+             throw new IllegalArgumentException("no puede ser nulo");
+            }
+         }
+ /**
+     * Busca un registro por su identificador, el identificador no puede ser nulo, de lo contrario se lanzará una IllegalArgumentException. Si el repositorio es nulo se lanzará una NullPointerException. Cualquier otra excepción se encapsulará en una IllegalStateException.
+     * @param id el identificador del registro a buscar
+     * @return el registro encontrado o null si no se encuentra
+     * @throws IllegalArgumentException si el identificador es nulo
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
        public T findById(Object id){
-        throw new UnsupportedOperationException("Pendiente de implementar");
+        if (id!=null){
+            try {
+                EntityManager em = this.getEntityManager();
+                if (em != null){
+                    return em.find(entityClass, id);
+                }
+                throw new NullPointerException("El repositorio es nulo");
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        throw new IllegalArgumentException("id no puede ser nulo");
     }
 
 }

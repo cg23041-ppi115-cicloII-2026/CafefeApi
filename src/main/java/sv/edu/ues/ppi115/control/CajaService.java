@@ -11,18 +11,14 @@ import sv.edu.ues.ppi115.entity.Caja;
 public class CajaService extends AbstractDataAccess<Caja> {
 
     @PersistenceContext(unitName = "CafefePU")
-    private EntityManager em;
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
-
-    @Override
-    protected Class<Caja> getEntityClass() {
-        return Caja.class;
-    }
+    EntityManager em;
 
     public CajaService() {
+        super (Caja.class);
+    }
+
+    @Override
+    protected EntityManager getEntityManager(){
+        return em;
     }
 }
